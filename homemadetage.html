@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag Game</title>
+    <style>
+        #gameArea {
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+            position: relative;
+            overflow: hidden;
+        }
+        #target {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            position: absolute;
+            cursor: pointer;
+        }
+        #autoTagger {
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tag Game</h1>
+    <div id="gameArea">
+        <div id="target"></div>
+        <div id="autoTagger" onclick="toggleAutoTag()">Auto Tag</div>
+    </div>
+    <p id="score">Score: 0</p>
+    <script>
+        const target = document.getElementById('target');
+        const gameArea = document.getElementById('gameArea');
+        const scoreDisplay = document.getElementById('score');
+        let score = 0;
+        let autoTagging = false;
+        let autoTagInterval;
+        function moveTarget() {
+            const x = Math.random() * (gameArea.clientWidth - target.clientWidth);
+            const y = Math.random() * (gameArea.clientHeight - target.clientHeight);
+            target.style.left = `${x}px`;
+            target.style.top = `${y}px`;
+        }
+        function autoTag() {
+            if (!autoTagging) return;
+            const targetRect = target.getBoundingClientRect();
+            const autoTagger = document.getElementById('autoTagger');
+            const autoTaggerRect = autoTagger.getBoundingClientRect();
+            if (autoTaggerRect.right >= targetRect.left &&
+                autoTaggerRect.bottom >= targetRect.top) {
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+                moveTarget();
+            }
+        }
+        function toggleAutoTag() {
+            autoTagging = !autoTagging;
+            if (autoTagging) {
+                autoTagInterval = setInterval(autoTag, 500);
+            } else {
+                clearInterval(autoTagInterval);
+            }
+        }
+        target.addEventListener('click', () => {
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+            moveTarget();
+        });
+        setInterval(moveTarget, 1000);
+    </script>
+</body>
+</html>
